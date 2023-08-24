@@ -1,6 +1,4 @@
-
-
-# Gerekli Kütüphane ve Fonksiyonlar
+# Required functions and libraries
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -29,7 +27,7 @@ df.head()
 df.shape
 df.info()
 
-# TotalCharges sayısal bir değişken olmalı
+# TotalCharges must be numerical
 df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors='coerce')
 
 df["Churn"] = df["Churn"].apply(lambda x : 1 if x == "Yes" else 0)
@@ -37,12 +35,9 @@ df["Churn"] = df["Churn"].apply(lambda x : 1 if x == "Yes" else 0)
 df.head()
 
 ##################################
-# GÖREV 1: KEŞİFCİ VERİ ANALİZİ
+# EDA
 ##################################
 
-##################################
-# GENEL RESİM
-##################################
 
 def check_df(dataframe, head=5):
     print("##################### Shape #####################")
@@ -63,46 +58,11 @@ check_df(df)
 
 
 ##################################
-# NUMERİK VE KATEGORİK DEĞİŞKENLERİN YAKALANMASI
+# NUMERRICAL VE CATEGORİCAL VALUES
 ##################################
 
 def grab_col_names(dataframe, cat_th=10, car_th=20):
-    """
-
-    Veri setindeki kategorik, numerik ve kategorik fakat kardinal değişkenlerin isimlerini verir.
-    Not: Kategorik değişkenlerin içerisine numerik görünümlü kategorik değişkenler de dahildir.
-
-    Parameters
-    ------
-        dataframe: dataframe
-                Değişken isimleri alınmak istenilen dataframe
-        cat_th: int, optional
-                numerik fakat kategorik olan değişkenler için sınıf eşik değeri
-        car_th: int, optional
-                kategorik fakat kardinal değişkenler için sınıf eşik değeri
-
-    Returns
-    ------
-        cat_cols: list
-                Kategorik değişken listesi
-        num_cols: list
-                Numerik değişken listesi
-        cat_but_car: list
-                Kategorik görünümlü kardinal değişken listesi
-
-    Examples
-    ------
-        import seaborn as sns
-        df = sns.load_dataset("iris")
-        print(grab_col_names(df))
-
-
-    Notes
-    ------
-        cat_cols + num_cols + cat_but_car = toplam değişken sayısı
-        num_but_cat cat_cols'un içerisinde.
-
-    """
+  
     # cat_cols, cat_but_car
     cat_cols = [col for col in dataframe.columns if dataframe[col].dtypes == "O"]
     num_but_cat = [col for col in dataframe.columns if dataframe[col].nunique() < cat_th and dataframe[col].dtypes != "O"]
@@ -133,7 +93,7 @@ cat_but_car
 
 
 ##################################
-# KATEGORİK DEĞİŞKENLERİN ANALİZİ
+# ANALYSİS OF CATEGORICAL VALUES
 ##################################
 
 def cat_summary(dataframe, col_name, plot=False):
@@ -148,20 +108,20 @@ for col in cat_cols:
     cat_summary(df, col)
 
 
-# Veri setimizdeki müşterilerin yaklaşık yarısı erkek, diğer yarısı kadındır.
-# Müşterilerin yaklaşık %50'sinin bir ortağı var (evli)
-# Toplam müşterilerin yalnızca %30'unun bakmakla yükümlü olduğu kişiler var.
-# Müşterilerin %90'u telefon hizmeti almaktadır.
-# Telefon hizmeti alan %90'lık kesimin  yüzde 53'ü birden fazla hatta sahip değil
-# Internet servis sağlayıcısı bulunmayan %21'lik bir kesim var
-# Müşterilerin çoğu aydan aya sözleşme yapıyor. 1 yıllık ve 2 yıllık sözleşmelerde yakın sayıda  müşteri bulunmakta.
-# Müşterilerin %60 i kağıtsız faturası bulunmakta
-# Müşterilerin yaklaşık %26'sı geçen ay platformdan ayrılmış
-# Veri setinin  %16'sı yaşlı  müşterilerden oluşmaktadır Dolayısıyla verilerdeki müşterilerin çoğu genç
+# About half of the customers in our dataset are men and the other half are women.
+# About 50% of clients have a partner (married)
+# Only 30% of total customers have dependents.
+# 90% of customers receive telephone service.
+# 53 percent of the 90% who receive phone service do not have more than one line
+# There is a 21% segment that does not have an Internet service provider
+# Most of the customers are contracting month to month. There are close numbers of customers on 1-year and 2-year contracts.
+# 60% of customers have paperless invoices
+# About 26% of customers left the platform in the last month
+# 16% of the dataset consists of older customers So most of the customers in the data are young
 
 
 ##################################
-# NUMERİK DEĞİŞKENLERİN ANALİZİ
+# ANALYSIS OF NUMERICAL VALUES
 ##################################
 
 def num_summary(dataframe, numerical_col, plot=False):
@@ -177,13 +137,13 @@ def num_summary(dataframe, numerical_col, plot=False):
 for col in num_cols:
     num_summary(df, col, plot=True)
 
-# Tenure'e bakıldığında 1 aylık müşterilerin çok fazla olduğunu
-# ardından da 70 aylık müşterilerin geldiğini görüyoruz.
+# Looking at Tenure, it's a lot of customers for 1 month
+# We see 70 monthly customers coming.
 
 
 
 ##################################
-# NUMERİK DEĞİŞKENLERİN TARGET GÖRE ANALİZİ
+# ANALYSIS OF NUMERICAL VALUES WITH TARGET
 ##################################
 
 def target_summary_with_num(dataframe, target, numerical_col):
@@ -192,12 +152,12 @@ def target_summary_with_num(dataframe, target, numerical_col):
 for col in num_cols:
     target_summary_with_num(df, "Churn", col)
 
-# Tenure ve Churn ilişkisine baktığımızda churn olmayan müşterilerin daha uzun süredir müşteri olduklarını görüyoruz
-# monthlycharges ve Churn incelendiğinde churn olan müşterilerin ortalama aylık ödemeleri daha fazla
+# When we look at the Tenure and Churn relationship, we see that non-churn customers have been customers for longer
+# When monthlycharges and Churn are examined, the average monthly payments of customers with churn are higher.
 
 
 ##################################
-# KATEGORİK DEĞİŞKENLERİN TARGET GÖRE ANALİZİ
+# ANALYSIS OF NUMERICAL VALUES WITH TARGET
 ##################################
 
 
@@ -211,40 +171,40 @@ for col in cat_cols:
     target_summary_with_cat(df, "Churn", col)
 
 
-# Kadın ve erkeklerde churn yüzdesi neredeyse eşit
-# Partner ve dependents'i olan müşterilerin churn oranı daha düşük
-# PhoneServise ve MultipleLines'da fark yok
-# Fiber Optik İnternet Servislerinde kayıp oranı çok daha yüksek
-# No OnlineSecurity , OnlineBackup ve TechSupport gibi hizmetleri olmayan müşterilerin churn oranı yüksek
-# Bir veya iki yıllık sözleşmeli Müşterilere kıyasla, aylık aboneliği olan Müşterilerin daha büyük bir yüzdesi churn
-# Kağıtsız faturalandırmaya sahip olanların churn oranı daha fazla
-# ElectronicCheck PaymentMethod'a sahip müşteriler, diğer seçeneklere kıyasla platformdan daha fazla ayrılma eğiliminde
-# Yaşlı müşterilerde churn yüzdesi daha yüksektir
+# The percentage of churn in men and women is almost equal
+# Customers with partners and dependents have a lower churn rate
+# No difference in PhoneService and MultipleLines
+# Loss rate is much higher in Fiber Optic Internet Services
+# High churn rate for customers without services such as No OnlineSecurity, OnlineBackup and TechSupport
+# A larger percentage of Customers with a monthly subscription churn compared to Customers with a one- or two-year contract
+# Those with paperless billing have a higher churn rate
+# Customers with ElectronicCheck PaymentMethod tend to leave the platform more than other options
+# Older customers have a higher percentage of churn
 
 ##################################
-# KORELASYON
+# CORALATION
 ##################################
 
 df[num_cols].corr()
 
-# Korelasyon Matrisi
+# Coralation Matrix
 f, ax = plt.subplots(figsize=[18, 13])
 sns.heatmap(df[num_cols].corr(), annot=True, fmt=".2f", ax=ax, cmap="magma")
 ax.set_title("Correlation Matrix", fontsize=20)
 plt.show()
 
-# TotalChargers'in aylık ücretler ve tenure ile yüksek korelasyonlu olduğu görülmekte
+
 
 df.corrwith(df["Churn"]).sort_values(ascending=False)
 
 
 
 ##################################
-# GÖREV 2: FEATURE ENGINEERING
+#  FEATURE ENGINEERING
 ##################################
 
 ##################################
-# EKSİK DEĞER ANALİZİ
+# ANALYSIS OF MISSING VALUES
 ##################################
 
 df.isnull().sum()
@@ -261,20 +221,16 @@ def missing_values_table(dataframe, na_name=False):
 na_columns = missing_values_table(df, na_name=True)
 
 
-#df.drop(df[df["TotalCharges"].isnull()].index, axis=0)
 
-
-# df[df["TotalCharges"].isnull()]["TotalCharges"] = df[df["TotalCharges"].isnull()]["MonthlyCharges"]
 
 df.iloc[df[df["TotalCharges"].isnull()].index,19] = df[df["TotalCharges"].isnull()]["MonthlyCharges"]
 
 df["tenure"] = df["tenure"] + 1
 df[df["tenure"]==1]
 
-# TotalCharges direkt sıfıra eşitleyebiliriz.
 
 ##################################
-# AYKIRI DEĞER ANALİZİ
+# OUTLIERS
 ##################################
 
 def outlier_thresholds(dataframe, col_name, q1=0.05, q3=0.95):
@@ -307,7 +263,7 @@ for col in num_cols:
 
 
 ##################################
-# BASE MODEL KURULUMU
+# BASE MODEL 
 ##################################
 
 dff = df.copy()
@@ -391,10 +347,10 @@ for name, model in models:
 
 
 ##################################
-# ÖZELLİK ÇIKARIMI
+# NEW FEATURE
 ##################################
 
-# Tenure  değişkeninden yıllık kategorik değişken oluşturma
+# Tenure  
 df.loc[(df["tenure"]>=0) & (df["tenure"]<=12),"NEW_TENURE_YEAR"] = "0-1 Year"
 df.loc[(df["tenure"]>12) & (df["tenure"]<=24),"NEW_TENURE_YEAR"] = "1-2 Year"
 df.loc[(df["tenure"]>24) & (df["tenure"]<=36),"NEW_TENURE_YEAR"] = "2-3 Year"
@@ -403,35 +359,35 @@ df.loc[(df["tenure"]>48) & (df["tenure"]<=60),"NEW_TENURE_YEAR"] = "4-5 Year"
 df.loc[(df["tenure"]>60) & (df["tenure"]<=72),"NEW_TENURE_YEAR"] = "5-6 Year"
 
 
-# Kontratı 1 veya 2 yıllık müşterileri Engaged olarak belirtme
+# Specify contract 1 or 2 year customers as Engaged
 df["NEW_Engaged"] = df["Contract"].apply(lambda x: 1 if x in ["One year","Two year"] else 0)
 
-# Herhangi bir destek, yedek veya koruma almayan kişiler
+# People who do not receive any support, backup or protection
 df["NEW_noProt"] = df.apply(lambda x: 1 if (x["OnlineBackup"] != "Yes") or (x["DeviceProtection"] != "Yes") or (x["TechSupport"] != "Yes") else 0, axis=1)
 
-# Aylık sözleşmesi bulunan ve genç olan müşteriler
+# Young customers with monthly contracts
 df["NEW_Young_Not_Engaged"] = df.apply(lambda x: 1 if (x["NEW_Engaged"] == 0) and (x["SeniorCitizen"] == 0) else 0, axis=1)
 
 
-# Kişinin toplam aldığı servis sayısı
+# The total number of services received by the person
 df['NEW_TotalServices'] = (df[['PhoneService', 'InternetService', 'OnlineSecurity',
                                        'OnlineBackup', 'DeviceProtection', 'TechSupport',
                                        'StreamingTV', 'StreamingMovies']]== 'Yes').sum(axis=1)
 
 
-# Herhangi bir streaming hizmeti alan kişiler
+# People who buy any streaming service
 df["NEW_FLAG_ANY_STREAMING"] = df.apply(lambda x: 1 if (x["StreamingTV"] == "Yes") or (x["StreamingMovies"] == "Yes") else 0, axis=1)
 
-# Kişi otomatik ödeme yapıyor mu?
+# Does the person make automatic payments?
 df["NEW_FLAG_AutoPayment"] = df["PaymentMethod"].apply(lambda x: 1 if x in ["Bank transfer (automatic)","Credit card (automatic)"] else 0)
 
-# ortalama aylık ödeme
+# average monthly payment
 df["NEW_AVG_Charges"] = df["TotalCharges"] / df["tenure"]
 
 # Güncel Fiyatın ortalama fiyata göre artışı
 df["NEW_Increase"] = df["NEW_AVG_Charges"] / df["MonthlyCharges"]
 
-# Servis başına ücret
+# fee per service
 df["NEW_AVG_Service_Fee"] = df["MonthlyCharges"] / (df['NEW_TotalServices'] + 1)
 
 
@@ -445,7 +401,6 @@ df.shape
 # ENCODING
 ##################################
 
-# Değişkenlerin tiplerine göre ayrılması işlemi
 cat_cols, num_cols, cat_but_car = grab_col_names(df)
 
 # LABEL ENCODING
@@ -463,7 +418,7 @@ for col in binary_cols:
 df.head()
 
 # One-Hot Encoding İşlemi
-# cat_cols listesinin güncelleme işlemi
+
 cat_cols = [col for col in cat_cols if col not in binary_cols and col not in ["Churn", "NEW_TotalServices"]]
 cat_cols
 
@@ -476,7 +431,7 @@ df = one_hot_encoder(df, cat_cols, drop_first=True)
 df.head()
 
 ##################################
-# MODELLEME
+# MODEL
 ##################################
 
 
@@ -550,15 +505,15 @@ for name, model in models:
 
 rf_model = RandomForestClassifier(random_state=17)
 
-rf_params = {"max_depth": [5, 8, None], # Ağacın maksimum derinliği
-             "max_features": [3, 5, 7, "auto"], # En iyi bölünmeyi ararken göz önünde bulundurulması gereken özelliklerin sayısı
-             "min_samples_split": [2, 5, 8, 15, 20], # Bir node'u bölmek için gereken minimum örnek sayısı
-             "n_estimators": [100, 200, 500]} # Ağaç sayısı
+rf_params = {"max_depth": [5, 8, None], 
+             "max_features": [3, 5, 7, "auto"], 
+             "min_samples_split": [2, 5, 8, 15, 20], 
+             "n_estimators": [100, 200, 500]} 
 
 rf_best_grid = GridSearchCV(rf_model, rf_params, cv=5, n_jobs=-1, verbose=True).fit(X, y)
 
-rf_best_grid.best_params_ # {'max_depth': None, 'max_features': 7, 'min_samples_split': 15, 'n_estimators': 100}
-#rf_final = rf_model.set_params(rf_best_grid.best_params_, random_state=17).fit(X, y)
+rf_best_grid.best_params_ 
+
 
 rf_final = RandomForestClassifier(max_depth=None, max_features=7,min_samples_split=15,n_estimators=100,random_state=17).fit(X, y)
 cv_results = cross_validate(rf_final, X, y, cv=10, scoring=["accuracy", "f1","recall","precision"])
